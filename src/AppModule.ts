@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from "joi";
 import { Restaurant } from './restaurants/entities/restaurants.entity';
+import { RouterModule } from '@nestjs/core';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 
 
 @Module({
@@ -34,7 +36,16 @@ import { Restaurant } from './restaurants/entities/restaurants.entity';
             entities: [Restaurant],
             synchronize: true,
             logging: true
-        })
+        }),
+        RouterModule.register(
+            [
+                {
+                    path: "restaurants",
+                    module: RestaurantsModule
+                },
+            ]
+        ),
+        RestaurantsModule
     ],
     controllers: [AppController],
     providers: [AppService],
