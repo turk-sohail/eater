@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from "joi";
-import { Restaurant } from './restaurants/entities/restaurants.entity';
 import { RouterModule } from '@nestjs/core';
 import { RestaurantsModule } from './restaurants/restaurants.module';
+import { UsersModule } from './users/users.module';
+import { User } from './users/enteties/users.entity';
 
 
 @Module({
@@ -33,9 +34,9 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: 'eater',
-            entities: [Restaurant],
+            entities: [User],
             synchronize: true,
-            logging: true
+            logging: false
         }),
         RouterModule.register(
             [
@@ -43,9 +44,14 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
                     path: "restaurants",
                     module: RestaurantsModule
                 },
+                {
+                    path: "users",
+                    module: UsersModule
+                }
             ]
         ),
-        RestaurantsModule
+        RestaurantsModule,
+        UsersModule
     ],
     controllers: [AppController],
     providers: [AppService],
