@@ -7,6 +7,7 @@ const error = {
 
 const success = {
     success: true,
+    token: "",
     message: 'Successfully completed the request',
     data: {},
     error: {}

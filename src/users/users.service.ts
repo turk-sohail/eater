@@ -3,11 +3,16 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./enteties/users.entity";
 import { Repository } from "typeorm";
 import { SuccessResponse, ErrorResponse } from "../common/Response";
+import { JwtService } from "src/utils/jwt/jwt.service";
 
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) { }
+    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>,
+        private jwtService: JwtService
+    ) {
+
+    }
 
     async createUser({ email, password, role }) {
         try {
@@ -16,11 +21,10 @@ export class UsersService {
                 throw new HttpException("User with this name already exist", HttpStatus.CONFLICT);
             }
 
-            const user = await this.usersRepository.create({ email, password, role });
-            console.log(user);
+            const user = this.usersRepository.create({ email, password, role });
             await this.usersRepository.save(user);
-            console.log(user)
-            return user;
+            SuccessResponse.data = user;
+            return SuccessResponse;
 
 
 
@@ -35,7 +39,7 @@ export class UsersService {
         try {
             const user = await this.usersRepository.findOneBy({ email });
             if (!user) {
-                return { message: "user not found" }
+                return { status: HttpStatus.NOT_FOUND, message: "user not found" }
             }
 
             const isValid = (await user).checkPassword(password);
@@ -43,8 +47,9 @@ export class UsersService {
                 ErrorResponse.message = "Wrong password"
                 return ErrorResponse;
             }
+            const token = await this.jwtService.sign({ userid: user.id });
             SuccessResponse.data = user;
-            console.log(user);
+            SuccessResponse.token = token;
             return SuccessResponse;
         } catch (error) {
             ErrorResponse.data = error;
@@ -52,7 +57,11 @@ export class UsersService {
         }
 
 
-    }
 
+    }
+    async findOne(id: any) {
+        const user = await this.usersRepository.findOneBy({ id });
+        return user;
+    }
 
 }

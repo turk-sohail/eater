@@ -5,9 +5,10 @@ import { CommonModule } from 'src/common/common.module';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 
+
 @Module({
     imports: [TypeOrmModule.forFeature([User]), CommonModule],
-    exports: [],
+    exports: [UsersService],
     providers: [UsersService],
     controllers: [UsersController]
 
