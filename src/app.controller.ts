@@ -1,6 +1,8 @@
-import { Controller, Get, Req, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthGuard } from './auth/auth.guard';
+import { AuthUser } from './auth/auth-user.decorator';
+import { User } from './users/enteties/users.entity';
 
 @Controller()
 export class AppController {
@@ -8,8 +10,8 @@ export class AppController {
 
   @UseGuards(AuthGuard)
   @Get()
-  getHello(@Req() req: any): string {
-    console.log(req.user);
+  getHello(@AuthUser() user: User): string {
+    console.log(user)
     return this.appService.getHello();
   }
 }

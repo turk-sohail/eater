@@ -1,8 +1,8 @@
-//import { Bcrypt } from "src/common/Bcrypt";
 import { InternalServerErrorException } from "@nestjs/common"
-import { BeforeInsert, Column, Entity, CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import { UpdateDateColumn, BeforeInsert, Column, Entity, CreateDateColumn, PrimaryGeneratedColumn, OneToOne, } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { IsEmail, IsEnum } from "class-validator";
+
 
 enum UserRole {
     Client = "Client",
@@ -17,7 +17,7 @@ export class User {
     @CreateDateColumn()
     createdAt: Date
 
-    @CreateDateColumn()
+    @UpdateDateColumn()
     updatedAt: Date
 
 
@@ -27,6 +27,9 @@ export class User {
 
     @Column()
     password: string
+
+    @Column({ default: false })
+    verified: boolean
 
     @Column({ type: "enum", enum: UserRole })
     @IsEnum(UserRole)
@@ -43,6 +46,7 @@ export class User {
         }
 
     }
+
 
     async checkPassword(pass: string) {
         try {

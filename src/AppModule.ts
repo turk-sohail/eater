@@ -10,6 +10,9 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/enteties/users.entity';
 import { JwtModule } from './utils/jwt/jwt.module';
 import { JwtMiddlware } from './middlewares/jwt.middleware';
+import { Verification } from './users/enteties/verification.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
 
 
 @Module({
@@ -35,7 +38,7 @@ import { JwtMiddlware } from './middlewares/jwt.middleware';
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: 'eater',
-            entities: [User],
+            entities: [User, Verification],
             synchronize: true,
             logging: false
         }),
@@ -51,7 +54,20 @@ import { JwtMiddlware } from './middlewares/jwt.middleware';
                 }
             ]
         ),
-        RestaurantsModule,
+        MailerModule.forRoot({
+            transport: {
+                host: 'smtp.ethereal.email',
+                port: 587,
+                ignoreTLS: false,
+                secure: false,
+                auth: {
+                    user: 'trudie.hirthe85@ethereal.email',
+                    pass: 'z1QxKNkYQnJ4e8Wb4u'
+                }
+            }
+        })
+        , RestaurantsModule,
+        MailModule,
         UsersModule,
         JwtModule.forRoot({ JWT_SECRET: process.env.JWT_SECRET }),
 
